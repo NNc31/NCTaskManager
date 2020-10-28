@@ -1,4 +1,4 @@
-package ua.edu.sumdu.j2se.studentName.tasks;
+package ua.edu.sumdu.j2se.nefodov.tasks;
 
 public class Main {
 
