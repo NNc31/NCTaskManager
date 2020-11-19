@@ -2,23 +2,28 @@ package ua.edu.sumdu.j2se.nefodov.tasks;
 
 /**
  * class for creating arrays of tasks
- * contains an array of tasks and size of the array
+ * contains an array of tasks, initialization size and size of the array
  */
 public class ArrayTaskList {
     private int size = 0;
-    private Task array[];
+    private final int INIT_SIZE = 5;
+    private Task array[] = new Task[INIT_SIZE];
 
     /**
-     * method of adding new tasks
-     * @param task is task to add
+     * method to add new tasks
+     * increases size of arraylist in half
+     * if bound of the array is reached
+     * @param task is new task to add
      */
     public void add(Task task){
-        Task[] newArray = new Task[size + 1];
-        for (int i = 0; i < size; i++) {
-            newArray[i] = array[i];
+        if(size == array.length){
+            Task[] newArray = new Task[size + size / 2];
+            for (int i = 0; i < size; i++) {
+                newArray[i] = array[i];
+            }
+            array = newArray;
         }
-        newArray[size] = task;
-        array = newArray;
+        array[size] = task;
         size++;
     }
 
