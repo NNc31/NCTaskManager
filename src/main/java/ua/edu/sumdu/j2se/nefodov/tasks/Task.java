@@ -5,6 +5,7 @@ package ua.edu.sumdu.j2se.nefodov.tasks;
  * have title and can be active or not active
  * done once or repeated with interval
  */
+
 public class Task {
     private String title;
     private boolean active;
@@ -17,11 +18,12 @@ public class Task {
      * constructor for one-time tasks
      * @param title is name of the task
      * @param time is time when the task must be done
+     * @throws IllegalArgumentException if time is less than 0
      */
-    public Task(String title, int time) {
-        if(time < 0){
-            System.out.println("Illegal argument");
-        } else{
+    public Task(String title, int time) throws IllegalArgumentException {
+        if (time < 0) {
+            throw new IllegalArgumentException();
+        } else {
             this.title = title;
             active = false;
             this.time = time;
@@ -37,10 +39,11 @@ public class Task {
      * @param start time of the start of repetition
      * @param end time of the end of repetition
      * @param interval time-interval between repetition
+     * @throws IllegalArgumentException if start/end/interval is less than 0
      */
-    public Task(String title, int start, int end, int interval) {
-        if(start < 0 || end < 0 || interval < 0){
-            System.out.println("Illegal argument");
+    public Task(String title, int start, int end, int interval) throws IllegalArgumentException {
+        if (start < 0 || end < 0 || interval < 0) {
+            throw new IllegalArgumentException();
         } else {
             this.title = title;
             active = false;
@@ -50,45 +53,45 @@ public class Task {
             this.interval = interval;
         }
     }
-    public String getTitle(){
+    public String getTitle() {
         return title;
     }
-    public void setTitle(String title){
+    public void setTitle(String title) {
         this.title = title;
     }
-    public boolean isActive(){
+    public boolean isActive() {
         return active;
     }
-    public void setActive(boolean active){
+    public void setActive(boolean active) {
         this.active = active;
     }
-    public int getTime(){
+    public int getTime() {
         return time;
     }
-    public void setTime(int time){
+    public void setTime(int time) {
         this.time = time;
         this.start = time;
         this.end = time;
     }
 
-    public int getStartTime(){
+    public int getStartTime() {
         return start;
     }
-    public int getEndTime(){
+    public int getEndTime() {
         return end;
     }
-    public int getRepeatInterval(){
+    public int getRepeatInterval() {
         if(start >= end) interval = 0;
         return interval;
     }
-    public void setTime(int start, int end, int interval){
+    public void setTime(int start, int end, int interval) {
         this.start = start;
         time = start;
         this.end = end;
         this.interval = interval;
     }
-    public boolean isRepeated(){
-        if(interval != 0 && start < end) return true;
+    public boolean isRepeated() {
+        if (interval != 0 && start < end) return true;
         else return false;
     }
 
@@ -96,15 +99,15 @@ public class Task {
      * method of next time implementation
      * @param current time relative to which next time of the task is returned
      * @return -1 if there is no next time or  nextTime
+     * @throws IllegalArgumentException if current is less than 0
      */
-    public int nextTimeAfter(int current) {
-        if(current < 0){
-            System.out.println("Illegal argument");
-            return -1;
+    public int nextTimeAfter(int current) throws IllegalArgumentException {
+        if(current < 0) {
+            throw new IllegalArgumentException();
         }
-        else if (active) {
-            if(isRepeated()){
-                if(current < start){
+        if (active) {
+            if(isRepeated()) {
+                if(current < start) {
                     return start;
                 }
                 int nextRepetition = (current - start) / interval + 1;

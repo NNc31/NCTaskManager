@@ -1,7 +1,7 @@
 package ua.edu.sumdu.j2se.nefodov.tasks;
 
 /**
- * class for creating arrays of tasks
+ * class for creating arrays of tasks.
  * contains an array of tasks, initialization size and size of the array
  */
 public class ArrayTaskList {
@@ -52,11 +52,12 @@ public class ArrayTaskList {
     /**
      * method to get task
      * @param index is position from zero of needed task
-     * @return needed task or null if there is no such task
+     * @return needed task by index
+     * @throws IndexOutOfBoundsException if index of task is incorrect
      */
-    public Task getTask(int index) {
+    public Task getTask(int index) throws IndexOutOfBoundsException {
         if(index >= size || index < 0){
-            return null;
+            throw new IndexOutOfBoundsException();
         }
         return array[index];
     }
@@ -66,8 +67,12 @@ public class ArrayTaskList {
      * @param from is time from which tasks are included
      * @param to is time after which tasks are not included
      * @return array list of tasks
+     * @throws IllegalArgumentException if from is less than 0
      */
-    public ArrayTaskList incoming(int from, int to){
+    public ArrayTaskList incoming(int from, int to) throws IllegalArgumentException {
+        if(from < 0) {
+            throw new IllegalArgumentException();
+        }
         ArrayTaskList inTime = new ArrayTaskList();
         int nextTime;
         for(int i = 0; i < size; i++){
