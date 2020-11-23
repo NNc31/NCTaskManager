@@ -2,10 +2,9 @@ package ua.edu.sumdu.j2se.nefodov.tasks;
 
 /**
  * class for creating arrays of tasks.
- * contains an array of tasks, initialization size and size of the array
+ * contains an array of tasks and initialization size
  */
-public class ArrayTaskList {
-    private int size = 0;
+public class ArrayTaskList extends AbstractTaskList {
     private final int INIT_SIZE = 5;
     private Task array[] = new Task[INIT_SIZE];
 
@@ -15,6 +14,7 @@ public class ArrayTaskList {
      * if bound of the array is reached
      * @param task is new task to add
      */
+    @Override
     public void add(Task task){
         if(size == array.length){
             Task[] newArray = new Task[size + size / 2];
@@ -32,6 +32,7 @@ public class ArrayTaskList {
      * @param task is task to remove
      * @return true if task was removed, otherwise - false
      */
+    @Override
     public boolean remove(Task task){
         for(int i = 0; i < size; i++){
             if(array[i] == task){
@@ -45,16 +46,13 @@ public class ArrayTaskList {
         return false;
     }
 
-    public int size(){
-        return size;
-    }
-
     /**
      * method to get task
      * @param index is position from zero of needed task
      * @return needed task by index
      * @throws IndexOutOfBoundsException if index of task is incorrect
      */
+    @Override
     public Task getTask(int index) throws IndexOutOfBoundsException {
         if(index >= size || index < 0){
             throw new IndexOutOfBoundsException();
@@ -69,7 +67,8 @@ public class ArrayTaskList {
      * @return array list of tasks
      * @throws IllegalArgumentException if from is less than 0
      */
-    public ArrayTaskList incoming(int from, int to) throws IllegalArgumentException {
+    @Override
+    public ArrayTaskList incoming(int from, int to) throws IllegalArgumentException{
         if(from < 0) {
             throw new IllegalArgumentException();
         }
