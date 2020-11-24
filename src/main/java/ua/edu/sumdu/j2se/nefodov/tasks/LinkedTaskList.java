@@ -2,12 +2,11 @@ package ua.edu.sumdu.j2se.nefodov.tasks;
 
 /**
  * class for creating linked list of tasks
- * contains pointer to head and tail of linked list and size
+ * contains pointer to head and tail of linked list
  */
-public class LinkedTaskList {
+public class LinkedTaskList extends AbstractTaskList {
     private Node head;
     private Node tail;
-    private int size = 0;
 
     /**
      * inner class for node of list
@@ -32,6 +31,7 @@ public class LinkedTaskList {
      * method to add new tasks
      * @param task is new task to add
      */
+    @Override
     public void add(Task task) {
         Node node = new Node(task);
         if (head == null) {
@@ -48,6 +48,7 @@ public class LinkedTaskList {
      * @param task is task to remove
      * @return true if task was removed, otherwise - false
      */
+    @Override
     public boolean remove(Task task) {
         if (head == null) return false;
 
@@ -71,16 +72,13 @@ public class LinkedTaskList {
         return false;
     }
 
-    public int size() {
-        return size;
-    }
-
     /**
      * method to get task
      * @param index is position from zero of needed task
      * @return needed task by index
      * @throws IndexOutOfBoundsException if index of task is incorrect
      */
+    @Override
     public Task getTask(int index) throws IndexOutOfBoundsException {
         if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException();
@@ -111,6 +109,7 @@ public class LinkedTaskList {
      * @return linked list of tasks
      * @throws IllegalArgumentException if from is less than 0
      */
+    @Override
     public LinkedTaskList incoming(int from, int to) throws IllegalArgumentException {
         if (from < 0) {
             throw new IllegalArgumentException();
