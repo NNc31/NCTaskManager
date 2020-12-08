@@ -1,5 +1,7 @@
 package ua.edu.sumdu.j2se.nefodov.tasks;
 
+import java.util.Iterator;
+
 /**
  * class for creating arrays of tasks.
  * contains an array of tasks and initialization size
@@ -81,5 +83,71 @@ public class ArrayTaskList extends AbstractTaskList {
             }
         }
         return inTime;
+    }
+
+    @Override
+    public Iterator<Task> iterator() {
+        return new Iterator<Task>() {
+            private int index = 0;
+
+            @Override
+            public boolean hasNext() {
+                return index < size;
+            }
+
+            @Override
+            public Task next() {
+                return array[index++];
+            }
+
+            @Override
+            public void remove() {
+                if (index == 0) {
+                    throw new IllegalStateException();
+                } else {
+                    ArrayTaskList.this.remove(array[--index]);
+                }
+            }
+        };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ArrayTaskList arrayTaskList = (ArrayTaskList) o;
+        int amount = 0;
+        for (int i = 0; i < size; i++) {
+            if(array[i].equals(arrayTaskList.array[i])) amount++;
+        }
+        if (amount == size) return true;
+        else return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        for(int i = 0; i < size; i++) {
+            result += array[i].hashCode();
+        }
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        String str = "";
+        for(int i = 0; i < size; i++){
+            str += array[i].toString() + "\n";
+        }
+        return str;
+    }
+
+    @Override
+    public ArrayTaskList clone() {
+        ArrayTaskList arrayTaskList = new ArrayTaskList();
+        for (int i = 0; i < size; i++) {
+            arrayTaskList.add(array[i]);
+        }
+        return arrayTaskList;
     }
 }

@@ -1,12 +1,14 @@
 package ua.edu.sumdu.j2se.nefodov.tasks;
 
+import java.util.Objects;
+
 /**
  * class for creating new tasks
  * have title and can be active or not active
  * done once or repeated with interval
  */
 
-public class Task {
+public class Task implements Cloneable {
     private String title;
     private boolean active;
     private int time;
@@ -121,5 +123,60 @@ public class Task {
         } else {
             return -1;
         }
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return active == task.active &&
+                time == task.time &&
+                start == task.start &&
+                end == task.end &&
+                interval == task.interval &&
+                title.equals(task.title);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 31 * result + title.hashCode();
+        result = 31 * result + (active ? 1 : 0);
+        result = 31 * result + time;
+        result = 31 * result + start;
+        result = 31 * result + end;
+        result = 31 * result + interval;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        if (interval != 0) {
+            return "Task {" +
+                    "title = '" + title + '\'' +
+                    ", active = " + active +
+                    ", start = " + start +
+                    ", end = " + end +
+                    ", interval = " + interval +
+                    '}';
+        } else {
+            return "Task {" +
+                    "title = '" + title + '\'' +
+                    ", active = " + active +
+                    ", time =" + time +
+                    '}';
+        }
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Task task = new Task(title, time);
+        task.active = active;
+        task.start = start;
+        task.end = end;
+        task.interval = interval;
+        return task;
     }
 }

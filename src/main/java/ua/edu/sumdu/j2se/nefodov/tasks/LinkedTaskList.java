@@ -1,5 +1,7 @@
 package ua.edu.sumdu.j2se.nefodov.tasks;
 
+import java.util.Iterator;
+
 /**
  * class for creating linked list of tasks
  * contains pointer to head and tail of linked list
@@ -125,5 +127,75 @@ public class LinkedTaskList extends AbstractTaskList {
             node = node.next;
         }
         return inTime;
+    }
+
+    @Override
+    public Iterator<Task> iterator() {
+        return new Iterator<Task>() {
+            private Node nextNode = head;
+            private Node prevNode = null;
+
+            @Override
+            public boolean hasNext() {
+                return nextNode != null;
+            }
+
+            @Override
+            public Task next() {
+                prevNode = nextNode;
+                nextNode = nextNode.next;
+                return prevNode.task;
+            }
+
+            @Override
+            public void remove() {
+                if (prevNode == null) {
+                   throw new IllegalStateException();
+                } else {
+                    LinkedTaskList.this.remove(prevNode.task);
+                    prevNode = null;
+                }
+            }
+        };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LinkedTaskList linkedTaskList = (LinkedTaskList) o;
+        int amount = 0;
+        for (int i = 0; i < size; i++) {
+            if (getTask(i).equals(linkedTaskList.getTask(i))) amount++;
+        }
+        if (amount == size) return true;
+        else return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        for(int i = 0; i < size; i++) {
+            result += getTask(i).hashCode();
+        }
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        String str = "";
+        for(int i = 0; i < size; i++){
+            str += getTask(i).toString() + "\n";
+        }
+        return str;
+    }
+
+    @Override
+    public LinkedTaskList clone() {
+        LinkedTaskList linkedTaskList = new LinkedTaskList();
+        for (int i = 0; i < size; i++) {
+            linkedTaskList.add(getTask(i));
+        }
+        return linkedTaskList;
     }
 }
