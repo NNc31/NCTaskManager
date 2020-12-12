@@ -1,6 +1,8 @@
 package ua.edu.sumdu.j2se.nefodov.tasks;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 /**
  * class for creating arrays of tasks.
@@ -62,27 +64,13 @@ public class ArrayTaskList extends AbstractTaskList {
         return array[index];
     }
 
-    /**
-     * method to get an array list of tasks that executed
-     * @param from is time from which tasks are included
-     * @param to is time after which tasks are not included
-     * @return array list of tasks
-     * @throws IllegalArgumentException if from is less than 0
-     */
     @Override
-    public ArrayTaskList incoming(int from, int to) throws IllegalArgumentException{
-        if(from < 0) {
-            throw new IllegalArgumentException();
+    public Stream<Task> getStream(){
+        ArrayList<Task> arrayList = new ArrayList<Task>(size);
+        for (int i = 0; i < size; i++) {
+            arrayList.add(array[i]);
         }
-        ArrayTaskList inTime = new ArrayTaskList();
-        int nextTime;
-        for(int i = 0; i < size; i++){
-            nextTime = array[i].nextTimeAfter(from);
-            if(nextTime > from && nextTime <= to) {
-                inTime.add(array[i]);
-            }
-        }
-        return inTime;
+        return arrayList.stream();
     }
 
     @Override
@@ -149,5 +137,10 @@ public class ArrayTaskList extends AbstractTaskList {
             arrayTaskList.add(array[i]);
         }
         return arrayTaskList;
+    }
+
+    @Override
+    public ListTypes.types getType(){
+        return ListTypes.types.ARRAY;
     }
 }
