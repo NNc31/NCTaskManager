@@ -4,7 +4,7 @@ package ua.edu.sumdu.j2se.nefodov.tasks;
  * abstract class for lists of tasks
  * contains abstract methods and size
  */
-public abstract class AbstractTaskList {
+public abstract class AbstractTaskList implements Iterable, Cloneable {
     protected int size = 0;
 
     public abstract void add(Task task);

@@ -11,7 +11,7 @@ public class TaskListFactory {
      * @param type is type of the list - array list or linked list
      * @return list of needed type
      */
-    public static AbstractTaskList createTaskList(ListTypes.types type){
+    public static AbstractTaskList createTaskList(ListTypes.types type) {
         switch (type) {
             case ARRAY:
                 ArrayTaskList arrayTaskList = new ArrayTaskList();
