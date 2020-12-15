@@ -1,6 +1,8 @@
 package ua.edu.sumdu.j2se.nefodov.tasks;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.stream.Stream;
 
 /**
  * class for creating linked list of tasks
@@ -104,29 +106,15 @@ public class LinkedTaskList extends AbstractTaskList {
         throw new IndexOutOfBoundsException();
     }
 
-    /**
-     * method to get a list of tasks that executed
-     * @param from is time from which tasks are included
-     * @param to is time after which tasks are not included
-     * @return linked list of tasks
-     * @throws IllegalArgumentException if from is less than 0
-     */
     @Override
-    public LinkedTaskList incoming(int from, int to) throws IllegalArgumentException {
-        if (from < 0) {
-            throw new IllegalArgumentException();
+    public Stream<Task> getStream(){
+        LinkedList<Task> linkedList = new LinkedList<Task>();
+        Node ptr = this.head;
+        while (ptr != null) {
+            linkedList.add(ptr.task);
+            ptr = ptr.next;
         }
-        LinkedTaskList inTime = new LinkedTaskList();
-        int nextTime;
-        Node node = head;
-        while (node != null) {
-            nextTime = node.task.nextTimeAfter(from);
-            if (nextTime > from && nextTime <= to) {
-                inTime.add(node.task);
-            }
-            node = node.next;
-        }
-        return inTime;
+        return linkedList.stream();
     }
 
     @Override
@@ -197,5 +185,10 @@ public class LinkedTaskList extends AbstractTaskList {
             linkedTaskList.add(getTask(i));
         }
         return linkedTaskList;
+    }
+
+    @Override
+    public ListTypes.types getType(){
+        return ListTypes.types.LINKED;
     }
 }
