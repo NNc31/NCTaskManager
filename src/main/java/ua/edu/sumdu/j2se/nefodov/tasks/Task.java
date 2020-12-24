@@ -1,5 +1,6 @@
 package ua.edu.sumdu.j2se.nefodov.tasks;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
  * done once or repeated with interval
  */
 
-public class Task implements Cloneable {
+public class Task implements Cloneable, Serializable {
     private String title;
     private boolean active;
     private LocalDateTime time;
