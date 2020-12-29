@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-
 public class Tasks {
     public static Iterable<Task> incoming(Iterable<Task> tasks, LocalDateTime start, LocalDateTime end) throws IllegalArgumentException {
         if (start.isAfter(end)) {
