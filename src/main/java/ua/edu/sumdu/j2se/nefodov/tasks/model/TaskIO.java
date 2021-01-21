@@ -1,6 +1,9 @@
-package ua.edu.sumdu.j2se.nefodov.tasks;
+package ua.edu.sumdu.j2se.nefodov.tasks.model;
 
 import com.google.gson.Gson;
+import ua.edu.sumdu.j2se.nefodov.tasks.model.AbstractTaskList;
+import ua.edu.sumdu.j2se.nefodov.tasks.model.ArrayTaskList;
+import ua.edu.sumdu.j2se.nefodov.tasks.model.Task;
 
 import java.io.*;
 import java.time.Instant;
@@ -59,6 +62,7 @@ public class TaskIO {
             write(tasks, fos);
             fos.flush();
         } catch (IOException e) {
+
             e.printStackTrace();
         }
     }

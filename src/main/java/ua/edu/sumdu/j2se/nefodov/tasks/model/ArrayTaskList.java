@@ -1,4 +1,4 @@
-package ua.edu.sumdu.j2se.nefodov.tasks;
+package ua.edu.sumdu.j2se.nefodov.tasks.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -125,7 +125,7 @@ public class ArrayTaskList extends AbstractTaskList {
     public String toString() {
         String str = "";
         for(int i = 0; i < size; i++){
-            str += array[i].toString() + "\n";
+            str += "#" + (i + 1) + " " + array[i].toString() + "\n";
         }
         return str;
     }

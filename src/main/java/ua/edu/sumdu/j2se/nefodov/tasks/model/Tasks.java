@@ -1,4 +1,9 @@
-package ua.edu.sumdu.j2se.nefodov.tasks;
+package ua.edu.sumdu.j2se.nefodov.tasks.model;
+
+import ua.edu.sumdu.j2se.nefodov.tasks.model.AbstractTaskList;
+import ua.edu.sumdu.j2se.nefodov.tasks.model.ListTypes;
+import ua.edu.sumdu.j2se.nefodov.tasks.model.Task;
+import ua.edu.sumdu.j2se.nefodov.tasks.model.TaskListFactory;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
@@ -26,7 +31,7 @@ public class Tasks {
     }
 
     public static SortedMap<LocalDateTime, Set<Task>> calendar(Iterable<Task> tasks, LocalDateTime start, LocalDateTime end) {
-        SortedMap<LocalDateTime, Set<Task>> calendar = new TreeMap<LocalDateTime, Set<Task>>();
+        SortedMap<LocalDateTime, Set<Task>> calendar = new TreeMap<>();
         Iterable<Task> inTime = incoming(tasks, start, end);
         Iterator<Task> it = inTime.iterator();
 
@@ -34,7 +39,7 @@ public class Tasks {
             Task task = it.next();
             LocalDateTime temp = task.nextTimeAfter(start);
             if (task.isRepeated()) {
-                while (!temp.isAfter(end)) {
+                while (!temp.isAfter(task.getEndTime()) && !temp.isAfter(end)) {
                     if (!(calendar.containsKey(temp))) {
                         calendar.put(temp, new HashSet<Task>());
                     }
