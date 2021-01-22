@@ -1,12 +1,8 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.controller;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import ua.edu.sumdu.j2se.nefodov.tasks.view.NotificationView;
-import ua.edu.sumdu.j2se.nefodov.tasks.view.UserView;
+import ua.edu.sumdu.j2se.nefodov.tasks.view.View;
 
-
+import javax.swing.*;
 
 public class Main {
 
@@ -14,23 +10,16 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		UserController userController = new UserController();
-		userController.loadList(userController.loadFile()); // завантаження списку задач
+		Controller controller = new Controller();
+		controller.loadList(controller.getFile()); // завантаження списку задач
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			controller.saveList(controller.getFile()); // збереження списку задач автоматично
+		}));
 
-		UserView userView = new UserView(userController); // створення відображення
-		userController.setView(userView);
-		userController.launchOperation(UserOperations.MAIN_MENU); // запуск нового меню
 
-		//NotificationController notificationController = new NotificationController();
-		//notificationController.setTaskList(userController.getTaskList());
-		//NotificationView notificationView = new NotificationView(notificationController);
-		//notificationController.setView(notificationView);
-
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                userController.saveList(userController.loadFile()); // збереження списку задач
-            }
-        }));
+		View view = new View(controller); // створення відображення
+		controller.setView(view);
+		SwingUtilities.invokeLater(() -> controller.launchOperation(Operations.MAIN_MENU)); // запуск менюf
+		controller.setTimers();
 	}
 }

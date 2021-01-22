@@ -1,7 +1,7 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.view;
 
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserController;
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserOperations;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Controller;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Operations;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +12,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 
 public class MainMenu extends JFrame {
-    private UserController controller;
+    private Controller controller;
     private JPanel contentPane = new JPanel(new GridBagLayout());
     private JButton add = new JButton("Add task");
     private JButton edit = new JButton("Edit task");
@@ -23,9 +23,10 @@ public class MainMenu extends JFrame {
     private JMenuItem load = new JMenuItem("Load");
     private JMenuItem exit = new JMenuItem("Exit");
 
-    public MainMenu(UserController controller) {
+    public MainMenu(Controller controller) {
         this.controller = controller;
         setTitle("Task manager");
+        setIconImage(new ImageIcon("icon.jpg").getImage());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(contentPane);
 
@@ -83,18 +84,18 @@ public class MainMenu extends JFrame {
         public void actionPerformed (ActionEvent e) {
             if (e.getSource().equals(add)) {
                 dispose();
-                controller.launchOperation(UserOperations.ADD_MENU);
+                controller.launchOperation(Operations.ADD_MENU);
             } else if (e.getSource().equals(edit)) {
                 dispose();
-                controller.launchOperation(UserOperations.EDIT_TASK);
+                controller.launchOperation(Operations.EDIT_TASK);
             } else if (e.getSource().equals(delete)) {
                 dispose();
-                controller.launchOperation(UserOperations.DELETE_TASK);
+                controller.launchOperation(Operations.DELETE_TASK);
             } else if (e.getSource().equals(info)) {
                 dispose();
-                controller.launchOperation(UserOperations.INFO_MENU);
+                controller.launchOperation(Operations.INFO_MENU);
             } else if (e.getSource().equals(save)) {
-                controller.saveList(controller.loadFile());
+                controller.saveList(controller.getFile());
             } else if (e.getSource().equals(exit)) {
                 System.exit(0);
             } else if (e.getSource().equals(load)) {
@@ -105,6 +106,7 @@ public class MainMenu extends JFrame {
                     File file = new File(fileChooser.getSelectedFile().getAbsolutePath());
                     if (controller.checkFile(file)) {
                         controller.setFile(file);
+                        controller.clearList();
                         controller.loadList(file);
                     } else {
                         JOptionPane.showMessageDialog(new JPanel(),

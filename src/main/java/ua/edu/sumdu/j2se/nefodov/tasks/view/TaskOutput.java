@@ -1,7 +1,7 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.view;
 
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserController;
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserOperations;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Controller;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Operations;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,14 +9,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class TaskOutput extends JFrame {
-    private UserController controller;
+    private Controller controller;
     private  JPanel contentPane = new JPanel(new GridBagLayout());
     private JButton ok = new JButton("OK");
     private JButton exit = new JButton("Exit");
 
-    public  TaskOutput(UserController controller) {
+    public  TaskOutput(Controller controller) {
         this.controller = controller;
         setTitle("Task manager");
+        setIconImage(new ImageIcon("icon.jpg").getImage());
         setContentPane(contentPane);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -63,7 +64,7 @@ public class TaskOutput extends JFrame {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource().equals(ok)) {
                 dispose();
-                controller.launchOperation(UserOperations.MAIN_MENU);
+                controller.launchOperation(Operations.MAIN_MENU);
             } else if (e.getSource().equals(exit)) {
                 System.exit(0);
             } else {

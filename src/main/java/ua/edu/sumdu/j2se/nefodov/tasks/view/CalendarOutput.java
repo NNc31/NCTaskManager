@@ -1,7 +1,7 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.view;
 
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserController;
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserOperations;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Controller;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Operations;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CalendarOutput extends JFrame {
-    private UserController controller;
+    private Controller controller;
     private  JPanel contentPane = new JPanel(new GridBagLayout());
     private JTextArea tasks = new JTextArea(15, 27);
     private JTextField startF = new JTextField(12);
@@ -19,9 +19,10 @@ public class CalendarOutput extends JFrame {
     private JButton back = new JButton("Back");
     private JLabel label = new JLabel("Calendar of tasks. Enter time period");
 
-    public CalendarOutput(UserController controller) {
+    public CalendarOutput(Controller controller) {
         this.controller = controller;
         setTitle("Task manager");
+        setIconImage(new ImageIcon("icon.jpg").getImage());
         setContentPane(contentPane);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -83,10 +84,10 @@ public class CalendarOutput extends JFrame {
                 }
             } else if (e.getSource().equals(ok)) {
                 dispose();
-                controller.launchOperation(UserOperations.MAIN_MENU);
+                controller.launchOperation(Operations.MAIN_MENU);
             } else if (e.getSource().equals(back)) {
                 dispose();
-                controller.launchOperation(UserOperations.INFO_MENU);
+                controller.launchOperation(Operations.INFO_MENU);
             } else {
                 throw new IllegalStateException();
             }

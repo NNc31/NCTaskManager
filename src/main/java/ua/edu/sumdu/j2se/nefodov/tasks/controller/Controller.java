@@ -1,84 +1,26 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.controller;
 
-import ua.edu.sumdu.j2se.nefodov.tasks.model.AbstractTaskList;
-import ua.edu.sumdu.j2se.nefodov.tasks.model.LinkedTaskList;
-import ua.edu.sumdu.j2se.nefodov.tasks.model.Task;
-import ua.edu.sumdu.j2se.nefodov.tasks.model.Tasks;
-import ua.edu.sumdu.j2se.nefodov.tasks.view.UserView;
+import ua.edu.sumdu.j2se.nefodov.tasks.model.*;
+import ua.edu.sumdu.j2se.nefodov.tasks.view.View;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Set;
-import java.util.SortedMap;
+import java.util.*;
+import java.util.Timer;
 
 import static ua.edu.sumdu.j2se.nefodov.tasks.model.TaskIO.readBinary;
 import static ua.edu.sumdu.j2se.nefodov.tasks.model.TaskIO.writeBinary;
 
-public class UserController {
+public class Controller {
 
     private AbstractTaskList taskList = new LinkedTaskList();
-    private UserView view = null;
+    private View view = null;
+    private LinkedList<Timer> timers = new LinkedList<>();
 
-    public File loadFile() {
-        File readFrom = new File("FileToLoad.bin");
-        if (readFrom.exists() && readFrom.canRead() && readFrom.length() != 0) {
-            File file = null;
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(readFrom), StandardCharsets.UTF_8))) {
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line);
-                }
-                file = new File(sb.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return file;
-        } else {
-            throw new IllegalStateException();
-        }
-    }
-
-    public void setFile(File file) {
-        File readFrom = new File("FileToLoad.bin");
-        try {
-            readFrom.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (FileOutputStream fos = new FileOutputStream(readFrom)) {
-            fos.write(file.getAbsolutePath().getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void loadList(File file) {
-        try {
-            file.createNewFile();
-            if (file.length() != 0) {
-                readBinary(taskList, file);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void saveList(File file) {
-        try {
-            if (file.exists() && file.delete() && file.createNewFile()) {
-                writeBinary(taskList, file);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void launchOperation(UserOperations op) {
+    public void launchOperation(Operations op) {
         switch (op) {
             case MAIN_MENU:
                 view.mainMenu();
@@ -106,7 +48,7 @@ public class UserController {
         }
     }
 
-    public void launchOperation(UserOperations op, int taskNum) {
+    public void launchOperation(Operations op, int taskNum) {
         switch (op) {
             case EDIT_MENU:
                 view.editMenu(taskNum);
@@ -128,7 +70,7 @@ public class UserController {
     }
 
     public boolean checkFile(File file) {
-        return file != null && file.exists() && file.length() != 0 && file.canRead();
+        return file != null && file.canRead() && file.exists();
     }
 
     public boolean checkTaskNum(String str) {
@@ -199,39 +141,52 @@ public class UserController {
         Task task = new Task(title, parseTime(timeStr));
         task.setActive(active);
         taskList.add(task);
+        updateTimers();
     }
 
     public void addTask(String title, boolean active, String startStr, String endStr, String intervalStr) {
         Task task = new Task(title, parseTime(startStr), parseTime(endStr), Integer.parseInt(intervalStr));
         task.setActive(active);
         taskList.add(task);
+        updateTimers();
     }
 
     public void editTitle(String title, int taskNum) {
         taskList.getTask(taskNum).setTitle(title);
+        updateTimers();
     }
 
     public void editActive(boolean active, int taskNum) {
         taskList.getTask(taskNum).setActive(active);
+        updateTimers();
     }
 
     public void editTime(String time, int taskNum) {
         taskList.getTask(taskNum).setTime(parseTime(time));
+        updateTimers();
     }
 
     public void editStartTime(String startTime, int taskNum) {
         Task task = taskList.getTask(taskNum);
         task.setTime(parseTime(startTime), task.getEndTime(), task.getRepeatInterval());
+        updateTimers();
     }
 
     public void editEndTime(String endTime, int taskNum) {
         Task task = taskList.getTask(taskNum);
         task.setTime(task.getStartTime(), parseTime(endTime), task.getRepeatInterval());
+        updateTimers();
     }
 
     public void editInterval(String interval, int taskNum) {
         Task task = taskList.getTask(taskNum);
         task.setTime(task.getStartTime(), task.getEndTime(), Integer.parseInt(interval));
+        updateTimers();
+    }
+
+    public void deleteTask(int taskNum) {
+        taskList.remove(taskList.getTask(taskNum));
+        updateTimers();
     }
 
     public AbstractTaskList getTaskList() {
@@ -242,11 +197,11 @@ public class UserController {
         this.taskList = taskList;
     }
 
-    public UserView getView() {
+    public View getView() {
         return view;
     }
 
-    public void setView(UserView view) {
+    public void setView(View view) {
         this.view = view;
     }
 
@@ -262,5 +217,92 @@ public class UserController {
             builder.append('\n');
         }
         return builder.toString();
+    }
+
+    public File getFile() {
+        File location = new File("ListLocation.txt");
+        File file;
+        try {
+            location.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (location.length() == 0) {
+            file = new File("tasks.bin");
+        } else {
+            StringBuilder builder = new StringBuilder();
+            try (FileReader reader = new FileReader(location)) {
+                int ch;
+                while ((ch = reader.read()) != -1) {
+                    builder.append((char) ch);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            file = new File(builder.toString());
+        }
+
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return file;
+    }
+
+    public void setFile(File file) {
+        File location = new File("ListLocation.txt");
+        try {
+            location.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (FileWriter writer = new FileWriter(location)) {
+            writer.write(file.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadList(File file) {
+        if (file.length() != 0) {
+            readBinary(taskList, file);
+        }
+    }
+
+    public void saveList(File file) {
+        writeBinary(taskList, file);
+    }
+
+    public void clearList() {
+        taskList = new LinkedTaskList();
+        updateTimers();
+    }
+
+    public void setTimers() {
+        clearTimers();
+        SortedMap<LocalDateTime, Set<Task>> map = Tasks.calendar(taskList,
+                LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+
+        for (LocalDateTime date : map.keySet()) {
+            Timer timer = new Timer();
+            timer.schedule(new Notification(map.get(date)), Date.from
+                    (date.atZone(ZoneId.systemDefault()).toInstant()));
+            timers.add(timer);
+        }
+    }
+
+    public void clearTimers() {
+        for (Timer timer : timers) {
+            timer.cancel();
+        }
+    }
+
+    public void updateTimers() {
+        clearTimers();
+        setTimers();
     }
 }

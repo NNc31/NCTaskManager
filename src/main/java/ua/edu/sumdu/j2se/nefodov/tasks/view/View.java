@@ -1,14 +1,14 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.view;
 
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserOperations;
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserController;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Operations;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Controller;
 
 import javax.swing.*;
 
-public class UserView {
-    private UserController controller;
+public class View {
+    private Controller controller;
 
-    public UserView (UserController controller) {
+    public View(Controller controller) {
         this.controller = controller;
     }
 
@@ -27,7 +27,7 @@ public class UserView {
     }
 
     public void editTask() {
-        taskSelection(UserOperations.EDIT_MENU);
+        taskSelection(Operations.EDIT_MENU);
     }
 
     public void editMenu(int n) {
@@ -38,7 +38,7 @@ public class UserView {
     }
 
     public void deleteTask() {
-        taskSelection(UserOperations.DELETE_MENU);
+        taskSelection(Operations.DELETE_MENU);
     }
 
     public void deleteConfirm(int taskNum) {
@@ -51,14 +51,14 @@ public class UserView {
 
         switch (response) {
             case JOptionPane.OK_OPTION:
-                controller.getTaskList().remove(controller.getTaskList().getTask(taskNum));
-                controller.launchOperation(UserOperations.TASK_OUTPUT);
+                controller.deleteTask(taskNum);
+                controller.launchOperation(Operations.TASK_OUTPUT);
                 break;
             case JOptionPane.CANCEL_OPTION:
-                controller.launchOperation(UserOperations.DELETE_TASK);
+                controller.launchOperation(Operations.DELETE_TASK);
                 break;
             default:
-                controller.launchOperation(UserOperations.MAIN_MENU);
+                controller.launchOperation(Operations.MAIN_MENU);
         }
     }
 
@@ -75,13 +75,13 @@ public class UserView {
 
         switch (response) {
             case JOptionPane.YES_OPTION:
-                controller.launchOperation(UserOperations.TASK_OUTPUT);
+                controller.launchOperation(Operations.TASK_OUTPUT);
                 break;
             case JOptionPane.NO_OPTION:
-                controller.launchOperation(UserOperations.CALENDAR_OUTPUT);
+                controller.launchOperation(Operations.CALENDAR_OUTPUT);
                 break;
             default:
-                controller.launchOperation(UserOperations.MAIN_MENU);
+                controller.launchOperation(Operations.MAIN_MENU);
         }
     }
 
@@ -92,7 +92,7 @@ public class UserView {
         taskOutput.setVisible(true);
     }
 
-    public void taskSelection(UserOperations operation) {
+    public void taskSelection(Operations operation) {
         TaskSelection taskSelection = new TaskSelection(controller, operation);
         taskSelection.pack();
         taskSelection.setLocationRelativeTo(null);

@@ -1,6 +1,6 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.controller;
 
-public enum UserOperations {
+public enum Operations {
     MAIN_MENU,
     ADD_MENU,
     EDIT_TASK,

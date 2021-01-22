@@ -1,7 +1,7 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.view;
 
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserController;
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserOperations;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Controller;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Operations;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,17 +9,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class TaskSelection extends JFrame {
-    private UserController controller;
-    private UserOperations nextOperation;
+    private Controller controller;
+    private Operations nextOperation;
     private JPanel contentPane = new JPanel();
     private JTextField task = new JTextField(2);
     private JButton submit = new JButton("Submit");
     private JButton back = new JButton("Back");
 
-    public TaskSelection(UserController controller, UserOperations operation) {
+    public TaskSelection(Controller controller, Operations operation) {
         this.controller = controller;
         nextOperation = operation;
         setTitle("Task manager");
+        setIconImage(new ImageIcon("icon.jpg").getImage());
         setContentPane(contentPane);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         contentPane.setLayout(new GridBagLayout());
@@ -84,7 +85,7 @@ public class TaskSelection extends JFrame {
                 }
             } else if (e.getSource().equals(back)) {
                 dispose();
-                controller.launchOperation(UserOperations.MAIN_MENU);
+                controller.launchOperation(Operations.MAIN_MENU);
             } else {
                 throw new IllegalStateException();
             }

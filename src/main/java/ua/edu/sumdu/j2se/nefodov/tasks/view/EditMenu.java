@@ -1,7 +1,7 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.view;
 
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserController;
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserOperations;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Controller;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Operations;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class EditMenu extends JFrame {
-    UserController controller;
+    Controller controller;
     int taskNum;
     private JPanel contentPane = new JPanel(new GridBagLayout());
     private JPanel cards = new JPanel(new CardLayout());
@@ -30,9 +30,10 @@ public class EditMenu extends JFrame {
     private JTextField endF = new JTextField(12);
     private JTextField intervalF = new JTextField(6);
 
-    public EditMenu(UserController controller, int taskNum) {
+    public EditMenu(Controller controller, int taskNum) {
         this.controller = controller;
         setTitle("Task manager");
+        setIconImage(new ImageIcon("icon.jpg").getImage());
         setContentPane(contentPane);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.taskNum = taskNum;
@@ -173,12 +174,13 @@ public class EditMenu extends JFrame {
 
     class ButtonEventListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
+            CardLayout layout = (CardLayout)(cards.getLayout());
             if (e.getSource().equals(submit)) {
                 if (title.isSelected()) {
                     if (controller.checkTitle(titleF.getText())) {
                         controller.editTitle(titleF.getText(), taskNum);
                         dispose();
-                        controller.launchOperation(UserOperations.TASK_OUTPUT);
+                        controller.launchOperation(Operations.TASK_OUTPUT);
                     } else {
                         JOptionPane.showMessageDialog(new JPanel(),
                                 "Incorrect title!");
@@ -186,12 +188,12 @@ public class EditMenu extends JFrame {
                 } else if (active.isSelected()) {
                     controller.editActive(active1.isSelected(), taskNum);
                     dispose();
-                    controller.launchOperation(UserOperations.TASK_OUTPUT);
+                    controller.launchOperation(Operations.TASK_OUTPUT);
                 } else if (time.isSelected()) {
                     if (controller.checkTime(timeF.getText())) {
                         controller.editTime(timeF.getText(), taskNum);
                         dispose();
-                        controller.launchOperation(UserOperations.TASK_OUTPUT);
+                        controller.launchOperation(Operations.TASK_OUTPUT);
                     } else {
                         JOptionPane.showMessageDialog(new JPanel(),
                                 "Incorrect time!");
@@ -200,7 +202,7 @@ public class EditMenu extends JFrame {
                     if (controller.checkTime(startF.getText(), taskNum)) {
                         controller.editStartTime(startF.getText(), taskNum);
                         dispose();
-                        controller.launchOperation(UserOperations.TASK_OUTPUT);
+                        controller.launchOperation(Operations.TASK_OUTPUT);
                     } else {
                         JOptionPane.showMessageDialog(new JPanel(),
                                 "Incorrect start time!");
@@ -209,7 +211,7 @@ public class EditMenu extends JFrame {
                     if (controller.checkTime(taskNum, endF.getText())) {
                         controller.editEndTime(endF.getText(), taskNum);
                         dispose();
-                        controller.launchOperation(UserOperations.TASK_OUTPUT);
+                        controller.launchOperation(Operations.TASK_OUTPUT);
                     } else {
                         JOptionPane.showMessageDialog(new JPanel(),
                                 "Incorrect end time!");
@@ -218,7 +220,7 @@ public class EditMenu extends JFrame {
                     if (controller.checkInterval(intervalF.getText())) {
                         controller.editInterval(intervalF.getText(), taskNum);
                         dispose();
-                        controller.launchOperation(UserOperations.TASK_OUTPUT);
+                        controller.launchOperation(Operations.TASK_OUTPUT);
                     } else {
                         JOptionPane.showMessageDialog(new JPanel(),
                                 "Incorrect interval!");
@@ -226,24 +228,18 @@ public class EditMenu extends JFrame {
                 }
             } else if (e.getSource().equals(back)) {
                 dispose();
-                controller.launchOperation(UserOperations.EDIT_TASK);
+                controller.launchOperation(Operations.EDIT_TASK);
             } else if (e.getSource().equals(title)) {
-                CardLayout layout = (CardLayout)(cards.getLayout());
                 layout.show(cards, "title");
             } else if (e.getSource().equals(active)) {
-                CardLayout layout = (CardLayout)(cards.getLayout());
                 layout.show(cards, "active");
             } else if (e.getSource().equals(time)) {
-                CardLayout layout = (CardLayout)(cards.getLayout());
                 layout.show(cards, "time");
             } else if (e.getSource().equals(start)) {
-                CardLayout layout = (CardLayout)(cards.getLayout());
                 layout.show(cards, "start");
             } else if (e.getSource().equals(end)) {
-                CardLayout layout = (CardLayout)(cards.getLayout());
                 layout.show(cards, "end");
             } else if (e.getSource().equals(interval)) {
-                CardLayout layout = (CardLayout)(cards.getLayout());
                 layout.show(cards, "interval");
             } else {
                 throw new IllegalStateException();

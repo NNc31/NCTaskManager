@@ -1,7 +1,7 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.view;
 
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserController;
-import ua.edu.sumdu.j2se.nefodov.tasks.controller.UserOperations;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Controller;
+import ua.edu.sumdu.j2se.nefodov.tasks.controller.Operations;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class AddMenu extends JFrame {
-    private UserController controller;
+    private Controller controller;
     private JPanel contentPane = new JPanel();
     private JRadioButton yes = new JRadioButton("Yes");
     private JRadioButton no = new JRadioButton("No");
@@ -25,9 +25,10 @@ public class AddMenu extends JFrame {
     private JTextField endF = new JTextField(12);
     private JTextField timeF = new JTextField(12);
 
-    public AddMenu(UserController controller) {
+    public AddMenu(Controller controller) {
         this.controller = controller;
         setTitle("Task manager");
+        setIconImage(new ImageIcon("icon.jpg").getImage());
         setContentPane(contentPane);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -139,7 +140,7 @@ public class AddMenu extends JFrame {
                         controller.addTask(titleF2.getText(), active1.isSelected(),
                                 startF.getText(), endF.getText(), intervalF.getText());
                         dispose();
-                        controller.launchOperation(UserOperations.TASK_OUTPUT);
+                        controller.launchOperation(Operations.TASK_OUTPUT);
                     } else {
                         JOptionPane.showMessageDialog(new JPanel(),
                                 "Incorrect input!");
@@ -149,7 +150,7 @@ public class AddMenu extends JFrame {
                     if (controller.checkTask(titleF2.getText(), timeF.getText())) {
                         controller.addTask(titleF2.getText(), active2.isSelected(), timeF.getText());
                         dispose();
-                        controller.launchOperation(UserOperations.TASK_OUTPUT);
+                        controller.launchOperation(Operations.TASK_OUTPUT);
                     } else {
                         JOptionPane.showMessageDialog(new JPanel(),
                                 "Incorrect input!");
@@ -158,7 +159,7 @@ public class AddMenu extends JFrame {
                 }
             } else if (e.getSource().equals(back)) {
                 dispose();
-                controller.launchOperation(UserOperations.MAIN_MENU);
+                controller.launchOperation(Operations.MAIN_MENU);
             } else if (e.getSource().equals(yes)) {
                 CardLayout layout = (CardLayout)(cards.getLayout());
                 layout.show(cards, "Repeated");
