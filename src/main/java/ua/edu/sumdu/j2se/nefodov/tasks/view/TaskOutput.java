@@ -1,5 +1,7 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.view;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.edu.sumdu.j2se.nefodov.tasks.controller.Controller;
 import ua.edu.sumdu.j2se.nefodov.tasks.controller.Operations;
 
@@ -7,15 +9,22 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 
-public class TaskOutput extends JFrame {
+public class TaskOutput extends JFrame implements ActionListener, WindowStateListener {
     private Controller controller;
     private  JPanel contentPane = new JPanel(new GridBagLayout());
     private JButton ok = new JButton("OK");
     private JButton exit = new JButton("Exit");
+    private TrayIcon trayIcon;
+    private MenuItem trayExit = new MenuItem("Exit");
+
+    public static final Logger LOGGER = LogManager.getLogger(TaskOutput.class);
 
     public  TaskOutput(Controller controller) {
         this.controller = controller;
+
         setTitle("Task manager");
         setIconImage(new ImageIcon("icon.jpg").getImage());
         setContentPane(contentPane);
@@ -55,20 +64,59 @@ public class TaskOutput extends JFrame {
         c.insets = new Insets(0, 0, 5, 5);
         contentPane.add(flow, c);
 
-        ButtonEventListener eventListener = new ButtonEventListener();
-        ok.addActionListener(eventListener);
-        exit.addActionListener(eventListener);
+        ok.addActionListener(this);
+        exit.addActionListener(this);
+        trayExit.addActionListener(this);
+
+        if (SystemTray.isSupported()) {
+            addWindowStateListener(this);
+            PopupMenu pm = new PopupMenu();
+            pm.add(trayExit);
+
+            trayIcon = new TrayIcon(new ImageIcon("icon.jpg").getImage(), getTitle(), pm);
+            trayIcon.setImageAutoSize(true);
+            trayIcon.addActionListener(this);
+        }
+        LOGGER.debug("Task output created");
     }
 
-    class ButtonEventListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            if (e.getSource().equals(ok)) {
+    public void actionPerformed(ActionEvent e) {
+        LOGGER.debug("Action received");
+        if (e.getSource().equals(ok)) {
+            LOGGER.info("OK pressed");
+            dispose();
+            controller.launchOperation(Operations.MAIN_MENU);
+        } else if (e.getSource().equals(exit)) {
+            LOGGER.info("Closing program");
+            System.exit(0);
+        } else if (e.getSource().equals(trayExit)) {
+            LOGGER.info("Closing program from tray");
+            System.exit(0);
+        } else if (e.getSource().equals(trayIcon)) {
+            LOGGER.info("Expanding program from tray");
+            setExtendedState(NORMAL);
+            setVisible(true);
+            SystemTray.getSystemTray().remove(trayIcon);
+        } else {
+            LOGGER.error("Unexpected action event source");
+            throw new IllegalStateException();
+        }
+    }
+
+    @Override
+    public void windowStateChanged(WindowEvent we) {
+        LOGGER.debug("Windows state changed");
+        int state = we.getNewState();
+        SystemTray tray = SystemTray.getSystemTray();
+        if (state == ICONIFIED) {
+            LOGGER.info("Program put in tray");
+            try {
+                tray.add(trayIcon);
+                setVisible(false);
                 dispose();
-                controller.launchOperation(Operations.MAIN_MENU);
-            } else if (e.getSource().equals(exit)) {
-                System.exit(0);
-            } else {
-                throw new IllegalStateException();
+            } catch (AWTException e) {
+                LOGGER.error("AWTException in tray");
+                e.printStackTrace();
             }
         }
     }

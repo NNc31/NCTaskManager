@@ -6,20 +6,18 @@ import javax.swing.*;
 
 public class Main {
 
-	//public static final Logger LOGGER = LogManager.getLogger(Main.class);
-
 	public static void main(String[] args) {
-
 		Controller controller = new Controller();
 		controller.loadList(controller.getFile()); // завантаження списку задач
+
+		// автоматичне збереження задач при завершенні роботи програми
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			controller.saveList(controller.getFile()); // збереження списку задач автоматично
+			controller.saveList(controller.getFile());
 		}));
 
-
-		View view = new View(controller); // створення відображення
+		View view = new View(controller);
 		controller.setView(view);
-		SwingUtilities.invokeLater(() -> controller.launchOperation(Operations.MAIN_MENU)); // запуск менюf
-		controller.setTimers();
+		controller.setTimers(); // запуск таймерів для повідомлень
+		SwingUtilities.invokeLater(() -> controller.launchOperation(Operations.MAIN_MENU)); // запуск меню
 	}
 }

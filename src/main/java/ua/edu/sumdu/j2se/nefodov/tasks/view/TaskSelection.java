@@ -1,5 +1,7 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.view;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.edu.sumdu.j2se.nefodov.tasks.controller.Controller;
 import ua.edu.sumdu.j2se.nefodov.tasks.controller.Operations;
 
@@ -7,14 +9,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 
-public class TaskSelection extends JFrame {
+public class TaskSelection extends JFrame implements ActionListener, WindowStateListener {
     private Controller controller;
     private Operations nextOperation;
     private JPanel contentPane = new JPanel();
     private JTextField task = new JTextField(2);
     private JButton submit = new JButton("Submit");
     private JButton back = new JButton("Back");
+    private TrayIcon trayIcon;
+    private MenuItem trayExit = new MenuItem("Exit");
+
+    public static final Logger LOGGER = LogManager.getLogger(TaskSelection.class);
 
     public TaskSelection(Controller controller, Operations operation) {
         this.controller = controller;
@@ -68,26 +76,67 @@ public class TaskSelection extends JFrame {
         c.insets = new Insets(0, 0, 5, 5);
         contentPane.add(flow, c);
 
-        ButtonEventListener eventListener = new ButtonEventListener();
-        submit.addActionListener(eventListener);
-        back.addActionListener(eventListener);
+        submit.addActionListener(this);
+        back.addActionListener(this);
+
+        if (SystemTray.isSupported()) {
+            addWindowStateListener(this);
+            PopupMenu pm = new PopupMenu();
+            pm.add(trayExit);
+
+            trayIcon = new TrayIcon(new ImageIcon("icon.jpg").getImage(), getTitle(), pm);
+            trayIcon.setImageAutoSize(true);
+            trayIcon.addActionListener(this);
+        }
+        LOGGER.debug("Task selection created");
     }
 
-    class ButtonEventListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            if (e.getSource().equals(submit)) {
-                if (controller.checkTaskNum(task.getText())) {
-                    dispose();
-                    controller.launchOperation(nextOperation, Integer.parseInt(task.getText()) - 1);
-                } else {
-                    JOptionPane.showMessageDialog(new JPanel(),
-                            "Incorrect number!");
-                }
-            } else if (e.getSource().equals(back)) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        LOGGER.debug("Action received");
+        if (e.getSource().equals(submit)) {
+            LOGGER.info("Submit pressed");
+            if (controller.checkTaskNum(task.getText())) {
+                LOGGER.info("Number accepted");
                 dispose();
-                controller.launchOperation(Operations.MAIN_MENU);
+                controller.launchOperation(nextOperation, Integer.parseInt(task.getText()) - 1);
             } else {
-                throw new IllegalStateException();
+                LOGGER.info("Incorrect number");
+                JOptionPane.showMessageDialog(new JPanel(),
+                        "Incorrect number!");
+            }
+        } else if (e.getSource().equals(back)) {
+            LOGGER.info("Back pressed");
+            dispose();
+            controller.launchOperation(Operations.MAIN_MENU);
+        } else if (e.getSource().equals(trayExit)) {
+            LOGGER.info("Closing program from tray");
+            System.exit(0);
+        } else if (e.getSource().equals(trayIcon)) {
+            LOGGER.info("Expanding program from tray");
+            setExtendedState(NORMAL);
+            setVisible(true);
+            SystemTray.getSystemTray().remove(trayIcon);
+        } else {
+            LOGGER.error("Unexpected action event source");
+            throw new IllegalStateException();
+        }
+    }
+
+    @Override
+    public void windowStateChanged(WindowEvent we) {
+        LOGGER.debug("Windows state changed");
+        int state = we.getNewState();
+        SystemTray tray = SystemTray.getSystemTray();
+        if (state == ICONIFIED) {
+            LOGGER.info("Program put in tray");
+            try {
+                tray.add(trayIcon);
+                setVisible(false);
+                dispose();
+            } catch (AWTException e) {
+                LOGGER.error("AWTException in tray");
+                e.printStackTrace();
             }
         }
     }

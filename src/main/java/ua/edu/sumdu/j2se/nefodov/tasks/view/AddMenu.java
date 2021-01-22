@@ -1,5 +1,7 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.view;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.edu.sumdu.j2se.nefodov.tasks.controller.Controller;
 import ua.edu.sumdu.j2se.nefodov.tasks.controller.Operations;
 
@@ -7,8 +9,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 
-public class AddMenu extends JFrame {
+public class AddMenu extends JFrame implements ActionListener, WindowStateListener {
     private Controller controller;
     private JPanel contentPane = new JPanel();
     private JRadioButton yes = new JRadioButton("Yes");
@@ -24,6 +28,10 @@ public class AddMenu extends JFrame {
     private JTextField startF = new JTextField(12);
     private JTextField endF = new JTextField(12);
     private JTextField timeF = new JTextField(12);
+    private TrayIcon trayIcon;
+    private MenuItem trayExit = new MenuItem("Exit");
+
+    public static final Logger LOGGER = LogManager.getLogger(AddMenu.class);
 
     public AddMenu(Controller controller) {
         this.controller = controller;
@@ -123,51 +131,94 @@ public class AddMenu extends JFrame {
         yes.setFocusable(false);
         no.setFocusable(false);
 
-        ButtonEventListener eventListener = new ButtonEventListener();
-        submit.addActionListener(eventListener);
-        back.addActionListener(eventListener);
-        yes.addActionListener(eventListener);
-        no.addActionListener(eventListener);
+        submit.addActionListener(this);
+        back.addActionListener(this);
+        yes.addActionListener(this);
+        no.addActionListener(this);
+
+        if (SystemTray.isSupported()) {
+            addWindowStateListener(this);
+            PopupMenu pm = new PopupMenu();
+            pm.add(trayExit);
+
+            trayIcon = new TrayIcon(new ImageIcon("icon.jpg").getImage(), getTitle(), pm);
+            trayIcon.setImageAutoSize(true);
+            trayIcon.addActionListener(this);
+        }
+        LOGGER.debug("Add menu created");
     }
 
-    class ButtonEventListener implements ActionListener {
-        public void actionPerformed (ActionEvent e) {
-            if (e.getSource().equals(submit)) {
-                submit.setEnabled(false);
-                if (yes.isSelected()) {
-                    if (controller.checkTask(titleF1.getText(),
-                            startF.getText(), endF.getText(), intervalF.getText())) {
-                        controller.addTask(titleF2.getText(), active1.isSelected(),
-                                startF.getText(), endF.getText(), intervalF.getText());
-                        dispose();
-                        controller.launchOperation(Operations.TASK_OUTPUT);
-                    } else {
-                        JOptionPane.showMessageDialog(new JPanel(),
-                                "Incorrect input!");
-                        submit.setEnabled(true);
-                    }
+    @Override
+    public void actionPerformed (ActionEvent e) {
+        LOGGER.debug("Action received");
+        if (e.getSource().equals(submit)) {
+            LOGGER.info("Submit pressed");
+            submit.setEnabled(false);
+            if (yes.isSelected()) {
+                if (controller.checkTask(titleF1.getText(),
+                        startF.getText(), endF.getText(), intervalF.getText())) {
+                    controller.addTask(titleF1.getText(), active1.isSelected(),
+                            startF.getText(), endF.getText(), intervalF.getText());
+                    dispose();
+                    controller.launchOperation(Operations.TASK_OUTPUT);
                 } else {
-                    if (controller.checkTask(titleF2.getText(), timeF.getText())) {
-                        controller.addTask(titleF2.getText(), active2.isSelected(), timeF.getText());
-                        dispose();
-                        controller.launchOperation(Operations.TASK_OUTPUT);
-                    } else {
-                        JOptionPane.showMessageDialog(new JPanel(),
-                                "Incorrect input!");
-                        submit.setEnabled(true);
-                    }
+                    LOGGER.info("Incorrect input");
+                    JOptionPane.showMessageDialog(new JPanel(),
+                            "Incorrect input!");
+                    submit.setEnabled(true);
                 }
-            } else if (e.getSource().equals(back)) {
-                dispose();
-                controller.launchOperation(Operations.MAIN_MENU);
-            } else if (e.getSource().equals(yes)) {
-                CardLayout layout = (CardLayout)(cards.getLayout());
-                layout.show(cards, "Repeated");
-            } else if (e.getSource().equals(no)) {
-                CardLayout layout = (CardLayout)(cards.getLayout());
-                layout.show(cards, "Not repeated");
             } else {
-                throw new IllegalStateException();
+                if (controller.checkTask(titleF2.getText(), timeF.getText())) {
+                    controller.addTask(titleF2.getText(), active2.isSelected(), timeF.getText());
+                    dispose();
+                    controller.launchOperation(Operations.TASK_OUTPUT);
+                } else {
+                    LOGGER.info("Incorrect input");
+                    JOptionPane.showMessageDialog(new JPanel(),
+                            "Incorrect input!");
+                    submit.setEnabled(true);
+                }
+            }
+        } else if (e.getSource().equals(back)) {
+            LOGGER.info("Back pressed");
+            dispose();
+            controller.launchOperation(Operations.MAIN_MENU);
+        } else if (e.getSource().equals(yes)) {
+            LOGGER.debug("Yes pressed");
+            CardLayout layout = (CardLayout)(cards.getLayout());
+            layout.show(cards, "Repeated");
+        } else if (e.getSource().equals(no)) {
+            LOGGER.debug("No pressed");
+            CardLayout layout = (CardLayout)(cards.getLayout());
+            layout.show(cards, "Not repeated");
+        } else if (e.getSource().equals(trayExit)) {
+            LOGGER.info("Closing program from tray");
+            System.exit(0);
+        } else if (e.getSource().equals(trayIcon)) {
+            LOGGER.info("Expanding program from tray");
+            setExtendedState(NORMAL);
+            setVisible(true);
+            SystemTray.getSystemTray().remove(trayIcon);
+        } else {
+            LOGGER.error("Unexpected action event source");
+            throw new IllegalStateException();
+        }
+    }
+
+    @Override
+    public void windowStateChanged(WindowEvent we) {
+        LOGGER.debug("Windows state changed");
+        int state = we.getNewState();
+        SystemTray tray = SystemTray.getSystemTray();
+        if (state == ICONIFIED) {
+            LOGGER.info("Program put in tray");
+            try {
+                tray.add(trayIcon);
+                setVisible(false);
+                dispose();
+            } catch (AWTException e) {
+                LOGGER.error("AWTException in tray");
+                e.printStackTrace();
             }
         }
     }

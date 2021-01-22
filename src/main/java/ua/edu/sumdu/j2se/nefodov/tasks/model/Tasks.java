@@ -1,10 +1,5 @@
 package ua.edu.sumdu.j2se.nefodov.tasks.model;
 
-import ua.edu.sumdu.j2se.nefodov.tasks.model.AbstractTaskList;
-import ua.edu.sumdu.j2se.nefodov.tasks.model.ListTypes;
-import ua.edu.sumdu.j2se.nefodov.tasks.model.Task;
-import ua.edu.sumdu.j2se.nefodov.tasks.model.TaskListFactory;
-
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.Set;
