@@ -1,7 +1,8 @@
-package ua.edu.sumdu.j2se.nefodov.tasks;
+package ua.edu.sumdu.j2se.nefodov.tasks.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * class for creating new tasks
@@ -106,7 +107,7 @@ public class Task implements Cloneable, Serializable {
                 if(nextRepetition.isAfter(end)) return null;
                 else return nextRepetition;
             } else {
-                if(current.isBefore(time)) return time;
+                if(current.isBefore(time) || current.equals(time)) return time;
                 else return null;
             }
         } else {
@@ -142,20 +143,17 @@ public class Task implements Cloneable, Serializable {
 
     @Override
     public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy");
+        String task = title + ": ";
+        if (active) task += "active";
+        else task += "not active";
         if (interval != 0) {
-            return "Task {" +
-                    "title = '" + title + '\'' +
-                    ", active = " + active +
-                    ", start = " + start +
-                    ", end = " + end +
-                    ", interval = " + interval +
-                    '}';
+            return task + ", start " + start.format(formatter) +
+                    ",\nend " + end.format(formatter) +
+                    ", interval is " + interval + "s";
+
         } else {
-            return "Task {" +
-                    "title = '" + title + '\'' +
-                    ", active = " + active +
-                    ", time =" + time +
-                    '}';
+            return task + ", time " + time.format(formatter);
         }
     }
 

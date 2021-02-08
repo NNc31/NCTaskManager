@@ -1,4 +1,4 @@
-package ua.edu.sumdu.j2se.nefodov.tasks;
+package ua.edu.sumdu.j2se.nefodov.tasks.model;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -173,7 +173,7 @@ public class LinkedTaskList extends AbstractTaskList {
     public String toString() {
         String str = "";
         for(int i = 0; i < size; i++){
-            str += getTask(i).toString() + "\n";
+            str += (i + 1) + ". " + getTask(i).toString() + "\n\n";
         }
         return str;
     }

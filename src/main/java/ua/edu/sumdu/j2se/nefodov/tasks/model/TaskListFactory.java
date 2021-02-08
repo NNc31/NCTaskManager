@@ -1,4 +1,4 @@
-package ua.edu.sumdu.j2se.nefodov.tasks;
+package ua.edu.sumdu.j2se.nefodov.tasks.model;
 
 /**
  * class for creating list of task of wished type
