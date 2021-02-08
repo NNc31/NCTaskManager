@@ -205,7 +205,7 @@ public class EditMenu extends JFrame implements ActionListener, WindowStateListe
                 } else {
                     LOGGER.info("Incorrect input");
                     JOptionPane.showMessageDialog(new JPanel(),
-                            "Incorrect title!");
+                            "Incorrect title!\n Title cannot be empty");
                 }
             } else if (active.isSelected()) {
                 LOGGER.info("New active entered - " + active.isSelected());
@@ -221,7 +221,8 @@ public class EditMenu extends JFrame implements ActionListener, WindowStateListe
                 } else {
                     LOGGER.info("Incorrect input");
                     JOptionPane.showMessageDialog(new JPanel(),
-                            "Incorrect time!");
+                            "Incorrect time!\n" +
+                                    "Time format: \"HH:mm dd.mm.yyyy\" or \"HH:mm:ss dd.mm.yyyy\"");
                 }
             } else if (start.isSelected()) {
                 LOGGER.info("New start time entered - " + startF.getText());
@@ -232,7 +233,8 @@ public class EditMenu extends JFrame implements ActionListener, WindowStateListe
                 } else {
                     LOGGER.info("Incorrect input");
                     JOptionPane.showMessageDialog(new JPanel(),
-                            "Incorrect start time!");
+                            "Incorrect start time!\n" +
+                                    "Time format: \"HH:mm dd.mm.yyyy\" or \"HH:mm:ss dd.mm.yyyy\"");
                 }
             } else if (end.isSelected()) {
                 LOGGER.info("New end time entered - " + endF.getText());
@@ -243,7 +245,8 @@ public class EditMenu extends JFrame implements ActionListener, WindowStateListe
                 } else {
                     LOGGER.info("Incorrect input");
                     JOptionPane.showMessageDialog(new JPanel(),
-                            "Incorrect end time!");
+                            "Incorrect end time!\n" +
+                                    "Time format: \"HH:mm dd.mm.yyyy\" or \"HH:mm:ss dd.mm.yyyy\"");
                 }
             } else if (interval.isSelected()) {
                 LOGGER.info("New interval entered - " + interval.getText());

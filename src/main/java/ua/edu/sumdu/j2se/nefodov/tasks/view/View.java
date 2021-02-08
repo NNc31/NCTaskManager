@@ -76,7 +76,8 @@ public class View {
     }
 
     public void deleteConfirm(int taskNum) {
-        LOGGER.debug("Launching of the deleting confirmation for task #" + taskNum);
+        LOGGER.debug("Launching of the deleting confirmation for task " +
+                controller.getTaskList().getTask(taskNum).getTitle());
         String taskName = controller.getTaskList().getTask(taskNum).getTitle();
         int response = JOptionPane.showConfirmDialog(new JPanel(),
                 "Task " + taskName +

@@ -107,7 +107,7 @@ public class Task implements Cloneable, Serializable {
                 if(nextRepetition.isAfter(end)) return null;
                 else return nextRepetition;
             } else {
-                if(current.isBefore(time)) return time;
+                if(current.isBefore(time) || current.equals(time)) return time;
                 else return null;
             }
         } else {

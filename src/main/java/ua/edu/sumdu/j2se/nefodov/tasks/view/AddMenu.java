@@ -164,7 +164,8 @@ public class AddMenu extends JFrame implements ActionListener, WindowStateListen
                 } else {
                     LOGGER.info("Incorrect input");
                     JOptionPane.showMessageDialog(new JPanel(),
-                            "Incorrect input!");
+                            "Incorrect input!\nTitle cannot be empty\n" +
+                                    "Time format: \"HH:mm dd.mm.yyyy\" or \"HH:mm:ss dd.mm.yyyy\"");
                     submit.setEnabled(true);
                 }
             } else {
@@ -175,7 +176,8 @@ public class AddMenu extends JFrame implements ActionListener, WindowStateListen
                 } else {
                     LOGGER.info("Incorrect input");
                     JOptionPane.showMessageDialog(new JPanel(),
-                            "Incorrect input!");
+                            "Incorrect input!\nTitle cannot be empty\n" +
+                                    "Time format: \"HH:mm dd.mm.yyyy\" or \"HH:mm:ss dd.mm.yyyy\"");
                     submit.setEnabled(true);
                 }
             }
